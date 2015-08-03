@@ -1,0 +1,157 @@
+<html>
+<head>
+<title>SneakOnjQuery</title>
+<script type="text/JavaScript" src="jquery-2.1.4.min.js"></script>
+<style>
+body{
+	margin:0px;
+	padding:0px;
+	background-color:black;
+}
+
+.sneak {
+	display:block;
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:25px;
+	height:25px;
+	background-color:black;
+	margin:0px;
+	padding:0px;
+	z-index:200px;
+}	
+
+.eat {
+	display:block;
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:25px;
+	height:25px;
+	background-color:green;
+	margin:0px;
+	padding:0px;
+	z-index:200px;
+}	
+
+.wall{
+	display:block;
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:500px;
+	height:500px;
+	background-color:#EEEEEE;
+	border-width:0px;
+	border-color:green;
+	margin:0px;
+	padding:0px;
+	z-index:0px;
+}
+#sneak {background-color:red;}
+</style>
+</head>
+<body>
+<div id="wall" class="wall">
+<div id="eat" class="eat"></div>
+<div id="sneak" class="sneak"></div>
+</div>
+
+
+
+<script type="text/javaScript">
+var head = $("#sneak");
+var sneak = $(".sneak");
+var eat = $("#eat");
+var length = 0;
+var tailCount=0;
+var wall = $("#wall");
+var hmove = sneak.width();
+var vmove = sneak.height();
+var sneakPosition = sneak.offset();
+var goUp = 1;
+var goDown = 2;
+var goLeft = 3;
+var goRight = 4;
+var stop = 0;
+var direction = goRight;
+var arrsneak = [];
+arrsneak.push($(".sneak:last"));
+
+function move()
+{
+	var headPositionTop = arrsneak[0].offset().top;
+	var headPositionLeft = arrsneak[0].offset().left;
+	var MyTempLeft = [];
+	var MyTempTop = [];
+	if (headPositionTop<0 || headPositionTop>wall.height()-vmove || headPositionLeft<0 || headPositionLeft>wall.width()-hmove){ 
+		direction = stop; 
+	}
+	if (headPositionTop==eat.offset().top && headPositionLeft==eat.offset().left)
+	{
+		addTail();
+		randomEat();
+	}
+	
+	switch (direction){
+		case goLeft:arrsneak[0].offset({top:headPositionTop, left:headPositionLeft-hmove});
+		break;
+		case goRight:arrsneak[0].offset({top:headPositionTop, left:headPositionLeft+hmove});
+		break;
+		case goUp:arrsneak[0].offset({top:headPositionTop-vmove, left:headPositionLeft});
+		break;
+		case goDown:arrsneak[0].offset({top:headPositionTop+vmove, left:headPositionLeft});
+		break;
+		case stop:arrsneak[0].offset({top:headPositionTop, left:headPositionLeft});
+		break;
+	}
+	
+	for (i=0; i<=length; i++){
+		MyTempLeft[i] = arrsneak[i].offset().left;
+		MyTempTop[i] = arrsneak[i].offset().top;
+	}
+	
+	for (i=1; i<=length; i++){
+		if (arrsneak[0].offset().top == MyTempTop[i] &&  arrsneak[0].offset().left == MyTempLeft[i])
+		{direction=stop;}
+		arrsneak[i].offset({top:MyTempTop[i-1], left:MyTempLeft[i-1]})
+	}
+
+}
+
+function randomEat(){
+	 x = hmove*Math.floor(Math.random() * (((wall.width()-hmove) / hmove) + 1));
+	 y = vmove*Math.floor(Math.random() * (((wall.height()-vmove) / vmove) + 1));
+	 eat.offset({top:y, left:x})
+}
+
+function addTail(){
+	var newTail = $("<div></div>").prependTo($("#wall"));
+	newTail.attr("id", "tail"+(length+1));
+	newTail.attr("class", "sneak");
+	tempLeft = $(".sneak:last").offset().left;
+	tempTop = $(".sneak:last").offset().top;
+	newTail.offset({top:tempTop, left:tempLeft});
+	arrsneak.push(newTail);
+	length++;
+}
+
+setInterval(function(){move()}, 500);
+
+document.onkeypress =  zx;
+function zx(e){
+    switch(e.keyCode){
+	case 27: addTail(); break;
+	case 37: direction = goLeft; break;
+	case 38: direction = goUp; break;
+	case 39: direction = goRight; break;
+	case 40: direction = goDown; break;
+	}
+}
+randomEat();
+addTail();
+
+</script>
+</body>
+</html>
