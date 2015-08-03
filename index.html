@@ -94,6 +94,11 @@ function move()
 		randomEat();
 	}
 	
+	for (i=0; i<=length; i++){
+		MyTempLeft[i] = arrsneak[i].offset().left;
+		MyTempTop[i] = arrsneak[i].offset().top;
+	}
+	
 	switch (direction){
 		case goLeft:arrsneak[0].offset({top:headPositionTop, left:headPositionLeft-hmove});
 		break;
@@ -105,11 +110,6 @@ function move()
 		break;
 		case stop:arrsneak[0].offset({top:headPositionTop, left:headPositionLeft});
 		break;
-	}
-	
-	for (i=0; i<=length; i++){
-		MyTempLeft[i] = arrsneak[i].offset().left;
-		MyTempTop[i] = arrsneak[i].offset().top;
 	}
 	
 	for (i=1; i<=length; i++){
@@ -150,7 +150,6 @@ function zx(e){
 	}
 }
 randomEat();
-addTail();
 
 </script>
 </body>
